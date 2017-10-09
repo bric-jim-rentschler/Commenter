@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Tools.Applications.Runtime;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 using System.Reflection;
-
+using System.IO;
 
 namespace Commenter
 {
@@ -27,26 +27,29 @@ namespace Commenter
         public static void AddCommentsToExcel()
         {
             Excel.Application excelApp = new Excel.ApplicationClass();
-            string myPath = @"C:\Immigration\fy2015_table1.xls";
+            string[] files = Directory.GetFiles(@"C:\Immigration", "*.xls");
+            foreach (string file in files)
+            {
+                excelApp.Workbooks.Open(file, Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value,
+                    Missing.Value, Missing.Value);
 
-            excelApp.Workbooks.Open(myPath, Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value,
-                Missing.Value, Missing.Value);
+                Excel.Worksheet activeWorksheet = ((Excel.Worksheet)excelApp.Application.ActiveWorkbook.Sheets[1]);
 
-            Excel.Worksheet activeWorksheet = ((Excel.Worksheet)excelApp.Application.ActiveWorkbook.Sheets[1]);
+                Excel.Range allCells = (Excel.Range)activeWorksheet.UsedRange;
 
-            Excel.Range allCells = (Excel.Range)activeWorksheet.UsedRange;
-
-            foreach (Excel.Range cell in allCells){
-                if (cell.Value != null && !cell.Value.Equals(" "))
+                foreach (Excel.Range cell in allCells)
                 {
-                    cell.AddComment(cell.Address.ToString() + " value=" + cell.Value);
+                    if (cell.Value != null && !cell.Value.Equals(" "))
+                    {
+                        cell.AddComment(cell.Address.ToString() + " value=" + cell.Value);
+                    }
+
                 }
-                
             }
             excelApp.ActiveWorkbook.Save();
             excelApp.Quit();
