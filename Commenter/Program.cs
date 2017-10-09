@@ -26,10 +26,11 @@ namespace Commenter
         }
         public static void AddCommentsToExcel()
         {
-            Excel.Application excelApp = new Excel.ApplicationClass();
+            
             string[] files = Directory.GetFiles(@"C:\Immigration", "*.xls");
             foreach (string file in files)
             {
+                Excel.Application excelApp = new Excel.ApplicationClass();
                 excelApp.Workbooks.Open(file, Missing.Value, Missing.Value,
                     Missing.Value, Missing.Value,
                     Missing.Value, Missing.Value,
@@ -50,9 +51,9 @@ namespace Commenter
                     }
 
                 }
+                excelApp.ActiveWorkbook.Save();
+                excelApp.Quit();
             }
-            excelApp.ActiveWorkbook.Save();
-            excelApp.Quit();
             Console.WriteLine("Done comments");
         }
 
